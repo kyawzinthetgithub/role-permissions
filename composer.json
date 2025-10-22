@@ -1,0 +1,29 @@
+{
+  "name": "kyawzinthet/role-permissions",
+  "description": "Laravel role-permissions package",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "KyawZinThet\\RolePermissions\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "KyawZinThet\\RolePermissions\\Providers\\RolePermissionsServiceProvider"
+      ]
+    }
+  },
+  "authors": [
+    {
+      "name": "Kyaw Zin Thet"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": "^8.1",
+    "illuminate/support": "^10.0|^11.0"
+  }
+}
