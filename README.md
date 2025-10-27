@@ -1,4 +1,4 @@
-# role-permissions
+# PHP Role Permission Package (For Laravel Framework)
 
 Laravel package to manage roles and CRUD-style permissions per module.
 
@@ -44,7 +44,12 @@ Note: `role_permissions` currently does not set default boolean values or foreig
 ## How to install
 
 1. Require the package via composer (if published) or add to your project as a local package.
-2. Publish config (optional):
+
+```sh
+composer require kyawzinthet/role-permissions
+```
+
+2. Publish config:
 
 ```php
 php artisan vendor:publish --provider="KyawZinThet\RolePermissions\Providers\RolePermissionsServiceProvider" --tag=config
@@ -56,7 +61,7 @@ php artisan vendor:publish --provider="KyawZinThet\RolePermissions\Providers\Rol
 php artisan migrate
 ```
 
-4. Seed default roles and permissions from config:
+4. Seed default roles and permissions from config via command:
 
 ```php
 php artisan install:role
