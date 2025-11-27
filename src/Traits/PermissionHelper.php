@@ -9,8 +9,8 @@ trait PermissionHelper
      */
     public function hasRole(string $role): bool
     {
-        return $this->roles()
-            ->where('name', $role)
+        return $this->role()
+            ->where('slug', $role)
             ->exists();
     }
 
@@ -27,7 +27,7 @@ trait PermissionHelper
         }
 
         // 2. permission via roles
-        return $this->roles()
+        return $this->role()
             ->whereHas('permissions', function ($query) use ($permission) {
                 $query->where('slug', $permission);
             })
