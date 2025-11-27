@@ -21,7 +21,7 @@ trait PermissionHelper
     {
         // 1. direct user permission
         if ($this->permissions()
-            ->where('name', $permission)
+            ->where('slug', $permission)
             ->exists()) {
             return true;
         }
@@ -29,7 +29,7 @@ trait PermissionHelper
         // 2. permission via roles
         return $this->roles()
             ->whereHas('permissions', function ($query) use ($permission) {
-                $query->where('name', $permission);
+                $query->where('slug', $permission);
             })
             ->exists();
     }

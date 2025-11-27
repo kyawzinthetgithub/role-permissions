@@ -133,8 +133,8 @@ class User extends Authenticatable
 
 Using the trait
 
-- `hasRole(string $role)` — returns `true` if the user has a role with the given name.
-- `hasPermission(string $permission)` — returns `true` if the user has the permission directly or via any of their roles.
+- `hasRole(string $role)` — returns `true` if the user has a role with the given slug.
+- `hasPermission(string $permission)` — returns `true` if the user has the permission slug directly or via any of their roles.
 
 Example:
 
