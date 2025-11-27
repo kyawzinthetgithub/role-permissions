@@ -117,17 +117,16 @@ class User extends Authenticatable
 {
 	use PermissionHelper;
 
-	public function roles()
-	{
-		return $this->belongsToMany(Role::class, 'user_roles');
-	}
+	public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
 
-	public function permissions()
-	{
-		return $this->belongsToMany(Permission::class, 'user_permissions')
-			->withPivot(['create', 'read', 'update', 'delete'])
-			->withTimestamps();
-	}
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'user_permissions')
+            ->withPivot('create', 'read', 'update', 'delete');
+    }
 }
 ```
 
