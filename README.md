@@ -74,6 +74,85 @@ php artisan install:permissions
 - Roles have a many-to-many relationship with permissions. The pivot `role_permissions` stores the allowed actions for that role on the permission.
 - User-level overrides are stored in `user_permissions`. The package does not currently include helpers to evaluate permissions or assign roles to users — `src/Helpers/PermissionHelper.php` is intentionally present as the place to implement permission resolution logic.
 
+## Dynamic user model & trait usage
+
+This package resolves your application's user model dynamically using Laravel's auth provider configuration. The migration and model helpers use:
+
+```php
+Config::get('auth.providers.users.model', \App\Models\User::class);
+```
+
+What this means for you:
+
+- Set your user model in `config/auth.php` under `providers.users.model` if you use a custom user class or a different namespace. Example:
+
+```php
+'providers' => [
+	'users' => [
+		'driver' => 'eloquent',
+		'model' => App\Models\User::class,
+	],
+],
+```
+
+- The `user_permissions` migration will instantiate your user model to determine the user table name, primary key name, and key type. If your user primary key is a string (for example `uuid` or `ulid`), the migration will create a `string('user_id')` column; otherwise it will create an `unsignedBigInteger('user_id')` column and add a foreign key referencing your users table.
+
+- Because the migration instantiates your user model at migration time, make sure your user model can be constructed without requiring application services that are not available during migrations. If you prefer, you can modify the migration to hard-code the table/key types for your project.
+
+Example `User` model usage
+
+Add the trait and the relations expected by the package to your application `User` model. The included `PermissionHelper` trait calls `roles()` and `permissions()` on the user, so those relationships should exist.
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use KyawZinThet\RolePermissions\Traits\PermissionHelper;
+use KyawZinThet\RolePermissions\Models\Role;
+use KyawZinThet\RolePermissions\Models\Permission;
+
+class User extends Authenticatable
+{
+	use PermissionHelper;
+
+	public function roles()
+	{
+		return $this->belongsToMany(Role::class, 'user_roles');
+	}
+
+	public function permissions()
+	{
+		return $this->belongsToMany(Permission::class, 'user_permissions')
+			->withPivot(['create', 'read', 'update', 'delete'])
+			->withTimestamps();
+	}
+}
+```
+
+Using the trait
+
+- `hasRole(string $role)` — returns `true` if the user has a role with the given name.
+- `hasPermission(string $permission)` — returns `true` if the user has the permission directly or via any of their roles.
+
+Example:
+
+```php
+if (auth()->user()->hasPermission('post')) {
+	// allowed
+}
+
+if (auth()->user()->hasRole('admin')) {
+	// admin-only logic
+}
+```
+
+Migration note
+
+- Run `php artisan migrate` after you have set `config/auth.php` to your intended user model so the `user_permissions` migration detects the correct user table and key type.
+- If your user model uses dependency injection in its constructor or otherwise cannot be instantiated during migrations, consider editing the migration to use explicit table/key names or ensure the model can be constructed without side effects.
+
 ## Example (planned) permission check API
 
 - PermissionHelper::can($user, 'user', 'read') // returns boolean
