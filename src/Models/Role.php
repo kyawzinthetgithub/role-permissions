@@ -22,6 +22,6 @@ class Role extends Model
     public function users()
     {
         $userModel = UserResolver::model();
-        return $this->belongsToMany($userModel, 'user_roles');
+        return $this->belongsToMany($userModel);
     }
 }
