@@ -12,7 +12,13 @@ class InstallPermissionsCommand extends Command
 
     public function handle()
     {
-        $permissions = config('permissions');
+        $permissions = collect(config('permissions'))
+            ->unique('slug')
+            ->values();
+
+        Permission::query()
+            ->whereNotIn('slug', $permissions->pluck('slug'))
+            ->delete();
 
         foreach ($permissions as $perm) {
             Permission::updateOrCreate(

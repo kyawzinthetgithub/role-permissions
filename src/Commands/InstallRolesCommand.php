@@ -17,11 +17,11 @@ class InstallRolesCommand extends Command
             return;
         }
 
-        Role::create([
-            'name' => 'Super Admin',
-            'slug' => 'super-admin'
-        ]);
+        Role::updateOrCreate(
+            ['slug' => 'super-admin'],
+            ['name' => 'Super Admin']
+        );
 
-        $this->info('Super Admin role created successfully.');
+        $this->info('Super Admin role installed successfully.');
     }
 }
